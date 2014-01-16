@@ -1,6 +1,6 @@
 defmodule Okapi do
   defmacro __using__(_) do
-    quote do
+    quote location: :keep do
       import Okapi
 
       @resources []
