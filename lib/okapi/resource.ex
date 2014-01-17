@@ -14,7 +14,7 @@ defmodule Okapi.Resource do
       EEx.function_from_string :defp, unquote(template_fn), unquote(rurl), [:assigns]
 
       def unquote(endpoint_name)(params // [], headers // []) do
-        "GET #{unquote(template_fn)(params)}"
+        handle_call(@parent_module, :get, unquote(template_fn)(params), unquote(options), params, headers)
       end
     end
   end
@@ -38,6 +38,7 @@ defmodule Okapi.Resource do
     valid_input? module, options[:input], params
   end
 
+  def valid_input?(_, nil, _), do: true
   def valid_input?(module, input_type, input) do
     case input do
       nil -> true

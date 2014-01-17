@@ -28,8 +28,10 @@ defmodule OkapiTest do
     assert MyAPI.foo == nil
     assert MyAPI.foo(:bar) == :ok
     assert MyAPI.foo == :bar
+  end
 
-    IO.puts inspect(MyAPI.description)
+  test "description" do
+    assert MyAPI.description == ["Elixir.MyAPI.Charge: Howdy", "Elixir.MyAPI.Customer: Howdy"]
   end
 end
 
@@ -45,7 +47,7 @@ defmodule OkapiTest.Resource do
   use ExUnit.Case
 
   test "resource" do
-    assert MyAPI.Charge.retrieve(id: 12) == "GET /charges/12"
+    assert MyAPI.Charge.retrieve(id: 12) == true
     
     assert MyAPI.Charge.create == false
     assert MyAPI.Charge.create(amount: 12, currency: "USD") == true

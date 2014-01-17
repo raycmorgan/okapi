@@ -18,7 +18,7 @@ defmodule Okapi do
       end
 
       def description do
-        Enum.map resources, &("#{&1}: " <> &1.description)
+        Enum.map resources, &("#{&1}: #{&1.description}")
       end
     end
   end
@@ -57,7 +57,6 @@ defmodule Okapi do
     {:__aliases__, _, [module_name]} = name
 
     quote do
-      IO.puts unquote(module_name)
       @resources @resources ++ [:"#{unquote(parent)}.#{unquote(module_name)}"]
 
       def resources, do: @resources
