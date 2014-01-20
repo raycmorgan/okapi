@@ -19,6 +19,6 @@ defmodule Okapi.Mixfile do
   # To specify particular versions, regardless of the tag, do:
   # { :barbat, "~> 0.1", github: "elixir-lang/barbat" }
   defp deps do
-    []
+    [{ :jsex, "~> 0.2", github: "talentdeficit/jsex" }]
   end
 end
