@@ -55,11 +55,7 @@ defmodule Okapi do
       Module.put_attribute(__MODULE__, :resources, :"#{unquote(parent)}.#{unquote(module_name)}")
 
       defmodule unquote(name) do
-        import Okapi.Resource
-        @api_module unquote(parent)
-
-        def description, do: "Howdy"
-
+        use Okapi.Resource, api_module: unquote(parent)
         unquote(block)
       end
     end

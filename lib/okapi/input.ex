@@ -1,13 +1,11 @@
 defmodule Okapi.Input do
-  defmacro required(name, options // []) do
-    quote do
-      Okapi.Input.__input__(__MODULE__, @input_key, :required, unquote(name), unquote(options))
-    end
-  end
+  Enum.each [:required, :optional], fn (modifier) ->
+    defmacro unquote(modifier)(name, options // []) do
+      modifier = unquote(modifier)
 
-  defmacro optional(name, options // []) do
-    quote do
-      Okapi.Input.__input__(__MODULE__, @input_key, :optional, unquote(name), unquote(options))
+      quote do
+        Okapi.Input.__input__(__MODULE__, @input_key, unquote(modifier), unquote(name), unquote(options))
+      end
     end
   end
 

@@ -1,44 +1,49 @@
 defmodule Okapi.Resource do
 
-  defmacro get(endpoint_name, path, options // []) do
-    rurl = path |> String.replace("{", "<%=@") |> String.replace("}", "%>")
-    template_fn = :"eex_#{endpoint_name}"
+  defmacro __using__(opts) do
+    quote location: :keep do
+      import Okapi.Resource
 
-    quote do
-      require EEx
+      @before_compile Okapi.Resource
+      @api_module unquote(opts)[:api_module]
 
-      EEx.function_from_string :defp, unquote(template_fn), unquote(rurl), [:assigns]
-
-      def unquote(endpoint_name)(params // [], headers // []) do
-        handle_call(@api_module, :get, unquote(template_fn)(params), unquote(options), params, headers)
-      end
-
-      def unquote(:"#{endpoint_name}!")(params // [], headers // []) do
-        {:ok, result} = handle_call(@api_module, :get, unquote(template_fn)(params), unquote(options), params, headers)
-        result
-      end
+      Module.register_attribute(__MODULE__, :endpoints, accumulate: true)
     end
   end
 
-  defmacro post(endpoint_name, path, options // []) do
-    rurl = path |> String.replace("{", "<%=@") |> String.replace("}", "%>")
-    template_fn = :"eex_#{endpoint_name}"
-
+  defmacro __before_compile__(env) do
     quote do
-      require EEx
+      def description, do: inspect(@endpoints)
+    end
+  end
 
-      EEx.function_from_string :defp, unquote(template_fn), unquote(rurl), [:assigns]
+  Enum.each [:get, :post], fn (method) ->
+    defmacro unquote(method)(endpoint_name, path, options // []) do
+      rurl = path |> String.replace("{", "<%=@") |> String.replace("}", "%>")
+      template_fn = :"eex_#{endpoint_name}"
+      method = unquote(method)
 
-      def unquote(endpoint_name)(params // [], headers // []) do
-        # IO.puts __MODULE__
-        handle_call(@api_module, :post, unquote(template_fn)(params), unquote(options), params, headers)
+      quote do
+        require EEx
+        EEx.function_from_string :defp, unquote(template_fn), unquote(rurl), [:assigns]
+
+        Module.put_attribute(__MODULE__, :endpoints, 
+          { unquote(endpoint_name),
+            Dict.merge([method: unquote(method)], unquote(options)) })
+
+        def unquote(endpoint_name)(params // [], headers // []) do
+          handle_call(@api_module, unquote(method), unquote(template_fn)(params), unquote(options), params, headers)
+        end
+
+        def unquote(:"#{endpoint_name}!")(params // [], headers // []) do
+          {:ok, result} = handle_call(@api_module, unquote(method), unquote(template_fn)(params), unquote(options), params, headers)
+          result
+        end
       end
     end
   end
 
   def handle_call(module, method, path, options, params, headers) do
-    # IO.puts module
-    # IO.puts __MODULE__
     case valid_input? module, options[:input], params do
       false -> {:error, :invalid_input}
       true -> request(method, module.base_url <> path)
@@ -57,16 +62,14 @@ defmodule Okapi.Resource do
 
   defp process_request_result(result) do
     {_, _, body} = result
-    {:ok, decoded} = JSEX.decode(body)
-    # IO.puts inspect(decoded["id"])
-    {:ok, decoded}
+    JSEX.decode(body)
   end
 
   defp valid_input?(_, nil, _), do: true
   defp valid_input?(module, input_type, input) do
     case input do
       nil -> true
-      _   -> module.valid?(input_type, input)
+      _   -> Okapi.valid?(module, input_type, input)
     end
   end
 

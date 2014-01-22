@@ -42,7 +42,9 @@ defmodule OkapiTest do
   end
 
   test "description" do
-    assert MyAPI.description == ["Elixir.MyAPI.Charge: Howdy", "Elixir.MyAPI.Customer: Howdy"]
+    assert MyAPI.description ==
+      ["Elixir.MyAPI.Charge: [create: [method: :post, input: :charge], retrieve: [method: :get]]",
+       "Elixir.MyAPI.Customer: []"]
   end
 end
 
