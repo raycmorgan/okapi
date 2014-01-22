@@ -60,17 +60,10 @@ defmodule Okapi.Resource do
     end
   end
 
-  defp process_request_result(result) do
-    {_, _, body} = result
-    JSEX.decode(body)
-  end
+  defp process_request_result({_, _, body}), do: JSEX.decode(body)
 
   defp valid_input?(_, nil, _), do: true
-  defp valid_input?(module, input_type, input) do
-    case input do
-      nil -> true
-      _   -> Okapi.valid?(module, input_type, input)
-    end
-  end
+  defp valid_input?(_, _, nil), do: true
+  defp valid_input?(module, input_type, input), do: Okapi.valid?(module, input_type, input)
 
 end

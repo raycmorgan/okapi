@@ -52,7 +52,7 @@ defmodule OkapiTest.Input do
   use ExUnit.Case
 
   test "valid input" do
-    assert MyAPI.valid?(:charge, [amount: 12]) == true
+    assert MyAPI.valid?(:charge, [amount: 12, currency: "USD"]) == true
   end
 
   test "invalid input" do

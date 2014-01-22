@@ -91,9 +91,13 @@ defmodule Okapi do
   def valid?(module, key, record) do
     schema = get_input(module, key)
 
+    
+
     Enum.all?(schema, fn
       {_, :optional, _} -> true
-      {name, :required, _} -> Enum.any?(record, &({name, _} = &1))
+      {name, :required, _} -> 
+        # IO.puts(inspect(record) <> "  " <> inspect(name) <> "  " <> inspect(Dict.has_key?(record, name)))
+        Dict.has_key?(record, name) # Enum.any?(record, &({name, _} = &1))
     end)
   end
 end
