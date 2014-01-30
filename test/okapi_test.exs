@@ -1,8 +1,12 @@
 defmodule MyAPI do
+  @moduledoc """
+  A sample client library for testing purposes.
+  """
+
   use Okapi
 
   config :foo
-  config :api_key, "1234"
+  config :api_key, "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
   config :base_url, "https://api.stripe.com/v1"
 
   input :charge do
@@ -14,12 +18,16 @@ defmodule MyAPI do
   end  
 
   resource Charge do
-    # doc doc_url("customers")
     get :retrieve, "/charges/{id}"
     post :create, "/charges", input: :charge
   end
 
   resource Customer do
+  end
+
+  def auth({method, uri, params, headers}) do
+    headers = Okapi.add_header(headers, "Authorization", MyAPI.api_key)
+    {method, uri, params, headers}
   end
 end
 
@@ -28,7 +36,16 @@ defmodule OkapiTest do
 
   test "start" do
     assert MyAPI.start == :ok
-    assert MyAPI.start == :ok
+
+    # Enum.each MyAPI.Charge.__info__(:docs), fn ({{name, arity}, _, _, _, docs}) ->
+    #   IO.puts "#{name}/#{arity}"
+
+    #   if docs do
+    #     IO.puts docs
+    #   end
+
+    #   IO.puts ""
+    # end
   end
 
   test "setting and getting config" do
@@ -38,7 +55,7 @@ defmodule OkapiTest do
   end
 
   test "config default" do
-    assert MyAPI.api_key == "1234"
+    assert MyAPI.api_key == "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
   end
 
   test "description" do
