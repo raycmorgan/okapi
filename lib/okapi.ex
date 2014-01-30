@@ -123,6 +123,10 @@ defmodule Okapi do
 
       defmodule unquote(name) do
         use Okapi.Resource, api_module: unquote(parent)
+
+        @doc nil
+        @edoc nil
+
         unquote(block)
       end
     end
@@ -164,6 +168,11 @@ defmodule Okapi do
     do: add_header(headers, binary_to_atom(key), value)
   def add_header(headers, key, value) when is_atom(key),
     do: Dict.put(headers, key, value)
+
+
+  # ---------------------------------------------------------------------------
+  # Internal Functions
+  # ---------------------------------------------------------------------------
 
   @doc false
   def description(module) do

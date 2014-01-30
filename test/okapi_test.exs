@@ -18,11 +18,17 @@ defmodule MyAPI do
   end  
 
   resource Charge do
+    @doc """
+    Blah Blah Blah
+    """
     get :retrieve, "/charges/{id}"
     post :create, "/charges", input: :charge
   end
 
   resource Customer do
+    @moduledoc """
+    This is a test.
+    """
   end
 
   def auth({method, uri, params, headers}) do
@@ -37,15 +43,7 @@ defmodule OkapiTest do
   test "start" do
     assert MyAPI.start == :ok
 
-    # Enum.each MyAPI.Charge.__info__(:docs), fn ({{name, arity}, _, _, _, docs}) ->
-    #   IO.puts "#{name}/#{arity}"
-
-    #   if docs do
-    #     IO.puts docs
-    #   end
-
-    #   IO.puts ""
-    # end
+    IO.puts(inspect(MyAPI.Charge.__info__(:docs)))
   end
 
   test "setting and getting config" do

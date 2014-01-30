@@ -57,10 +57,12 @@ defmodule Okapi.Resource do
       rurl = path |> String.replace("{", "<%=@") |> String.replace("}", "%>")
       template_fn = :"eex_#{endpoint_name}"
       method = unquote(method)
-      doc = if Dict.has_key?(options, :doc), do: options[:doc], else: ""
 
       quote do
         require EEx
+        
+        @edoc @doc
+        @doc nil
 
         Module.put_attribute(__MODULE__, :endpoints, 
           { unquote(endpoint_name),
@@ -68,12 +70,12 @@ defmodule Okapi.Resource do
 
         EEx.function_from_string :defp, unquote(template_fn), unquote(rurl), unquote(tmpl_input)
 
-        @doc unquote(doc)
+        @doc @edoc #unquote(doc)
         def unquote(endpoint_name)(params // [], headers // []) do
           handle_call(@api_module, unquote(method), unquote(template_fn)(params), unquote(options), params, headers)
         end
 
-        @doc "#{unquote(doc)}\nThrows exception if call fails."
+        @doc "#{@edoc}\nThrows exception if call fails."
         def unquote(:"#{endpoint_name}!")(params // [], headers // []) do
           {:ok, result} = handle_call(@api_module, unquote(method), unquote(template_fn)(params), unquote(options), params, headers)
           result
