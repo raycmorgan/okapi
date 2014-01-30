@@ -66,10 +66,20 @@ defmodule Okapi do
   """
   defmacro config(key, default // nil) do
     quote do
+      @doc """
+      Get the configuration value for `#{unquote(key)}`.
+
+          value = #{Enum.join(Module.split(__MODULE__), ".")}.#{unquote(key)}
+      """
       def unquote(key)() do
         Okapi.get_config(unquote(__MODULE__), unquote(key), unquote(default))
       end
 
+      @doc """
+      Set the configuration value for `#{unquote(key)}`.
+
+          #{Enum.join(Module.split(__MODULE__), ".")}.#{unquote(key)}(new_value)
+      """
       def unquote(key)(value) do
         Okapi.set_config(unquote(__MODULE__), unquote(key), value)
       end
@@ -124,8 +134,8 @@ defmodule Okapi do
       defmodule unquote(name) do
         use Okapi.Resource, api_module: unquote(parent)
 
-        @doc nil
-        @edoc nil
+        # Module.put_attribute(__MODULE__, :doc, nil)
+        # Module.put_attribute(__MODULE__, :edoc, nil)
 
         unquote(block)
       end

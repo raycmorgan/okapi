@@ -61,25 +61,30 @@ defmodule Okapi.Resource do
       quote do
         require EEx
         
-        @edoc @doc
-        @doc nil
+        # if Module.get_attribute(__MODULE__, :doc) do
+        #   @edoc @doc
+        # else
+        #   @edoc nil
+        # end
+
+        # @doc nil
+
+        # @doc @edoc #unquote(doc)
+        def unquote(endpoint_name)(params // [], headers // []) do
+          handle_call(@api_module, unquote(method), unquote(template_fn)(params), unquote(options), params, headers)
+        end
+
+        @doc "See `#{unquote(endpoint_name)}/2`. Throws exception if call fails."
+        def unquote(:"#{endpoint_name}!")(params // [], headers // []) do
+          {:ok, result} = handle_call(@api_module, unquote(method), unquote(template_fn)(params), unquote(options), params, headers)
+          result
+        end
 
         Module.put_attribute(__MODULE__, :endpoints, 
           { unquote(endpoint_name),
             Dict.merge([method: unquote(method)], unquote(options)) })
 
         EEx.function_from_string :defp, unquote(template_fn), unquote(rurl), unquote(tmpl_input)
-
-        @doc @edoc #unquote(doc)
-        def unquote(endpoint_name)(params // [], headers // []) do
-          handle_call(@api_module, unquote(method), unquote(template_fn)(params), unquote(options), params, headers)
-        end
-
-        @doc "#{@edoc}\nThrows exception if call fails."
-        def unquote(:"#{endpoint_name}!")(params // [], headers // []) do
-          {:ok, result} = handle_call(@api_module, unquote(method), unquote(template_fn)(params), unquote(options), params, headers)
-          result
-        end
       end
     end
   end
