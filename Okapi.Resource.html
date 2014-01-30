@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Okapi.Resource</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" charset="utf-8" />
+
+    <script type="text/javascript" charset="utf-8">
+      relpath = '';
+      if (relpath != '') relpath += '/';
+    </script>
+
+    <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+  </head>
+
+  <body>
+    <script type="text/javascript" charset="utf-8">
+      if (window.top.frames.main) document.body.className = 'frames';
+    </script>
+
+    <div id="content">
+      <h1>
+        Okapi.Resource
+        
+      </h1>
+
+      
+        <div id="moduledoc" class="docstring">
+          <p>Provides the functions to create the endpoint resources and also perform
+the actual HTTP(s) API calls.</p>
+
+        </div>
+      
+
+      
+        <a href="https://github.com/raycmorgan/okapi/blob/master/lib/okapi/resource.ex#L1" target="_blank" class="view_source">Source</a>
+      
+
+      
+
+      
+
+      
+        <h2 id="macros_summary">Macros summary</h2>
+        <table class="summary">
+          <tr>
+  <td class="summary_signature"><a href="#get/3">get(endpoint_name, path, options // [])</a></td>
+  
+    <td class="summary_synopsis"><p>Creates an endpoint function that uses the
+GET HTTP verb.</p>
+</td>
+  
+</tr>
+<tr>
+  <td class="summary_signature"><a href="#post/3">post(endpoint_name, path, options // [])</a></td>
+  
+    <td class="summary_synopsis"><p>Creates an endpoint function that uses the
+POST HTTP verb.</p>
+</td>
+  
+</tr>
+
+        </table>
+      
+
+      
+
+      
+
+      
+
+      
+        <div id="macros_details" class="details_list">
+          <h2>Macros</h2>
+          <div class="detail">
+  <p class="signature" id="get/3">
+    <strong>get(endpoint_name, path, options // [])</strong>
+  </p>
+  
+  <div class="docstring"><p>Creates an endpoint function that uses the
+GET HTTP verb.</p>
+
+<p>The function that will be generated will be named <code>endpoint_name</code>. For
+example, given the following module.</p>
+
+<pre><code>defmodule Stripe do
+  use Okapi
+
+  resource Charge do
+    get :retrieve, &quot;/charges/{id}&quot;
+  end
+end
+</code></pre>
+
+<p>The function <code>retrieve</code> will be added to the Stripe.Charge module.</p>
+
+<pre><code>{:ok, charge} = Stripe.Charge.retrieve(id: &quot;ch_103KlI2eZvKYlo2Cb03HHP8s&quot;)
+</code></pre>
+
+<p>There will also be a ! version created that simply returns the result, but
+throws an error on failed requests.</p>
+
+<pre><code>charge = Stripe.Charge.retrieve!(id: &quot;ch_103KlI2eZvKYlo2Cb03HHP8s&quot;)
+</code></pre>
+</div>
+  
+    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/okapi/resource.ex#L54" target="_blank" class="view_source">Source</a>
+  
+</div>
+<div class="detail">
+  <p class="signature" id="post/3">
+    <strong>post(endpoint_name, path, options // [])</strong>
+  </p>
+  
+  <div class="docstring"><p>Creates an endpoint function that uses the
+POST HTTP verb.</p>
+
+<p>The function that will be generated will be named <code>endpoint_name</code>. For
+example, given the following module.</p>
+
+<pre><code>defmodule Stripe do
+  use Okapi
+
+  resource Charge do
+    post :create, &quot;/charges/{id}&quot;
+  end
+end
+</code></pre>
+
+<p>The function <code>create</code> will be added to the Stripe.Charge module.</p>
+
+<pre><code>{:ok, result} = Stripe.Charge.create(id: &quot;ch_103KlI2eZvKYlo2Cb03HHP8s&quot;)
+</code></pre>
+
+<p>There will also be a ! version created that simply returns the result, but
+throws an error on failed requests.</p>
+
+<pre><code>result = Stripe.Charge.create!(id: &quot;ch_103KlI2eZvKYlo2Cb03HHP8s&quot;)
+</code></pre>
+</div>
+  
+    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/okapi/resource.ex#L54" target="_blank" class="view_source">Source</a>
+  
+</div>
+
+        </div>
+      
+
+      
+    </div>
+  </body>
+</html>
