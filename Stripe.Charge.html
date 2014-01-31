@@ -26,6 +26,13 @@
       </h1>
 
       
+        <div id="moduledoc" class="docstring">
+          <p>To charge a credit or a debit card, you create a new charge object.
+You can retrieve and refund individual charges as well as list all
+charges. Charges are identified by a unique random ID.</p>
+
+        </div>
+      
 
       
         <a href="https://github.com/raycmorgan/okapi/blob/master/lib/stripe.ex#L19" target="_blank" class="view_source">Source</a>
@@ -38,6 +45,9 @@
         <table class="summary">
           <tr>
   <td class="summary_signature"><a href="#create/2">create(params // [], headers // [])</a></td>
+  
+    <td class="summary_synopsis"><p>Creates a new charge.</p>
+</td>
   
 </tr>
 <tr>
@@ -54,7 +64,8 @@
 <tr>
   <td class="summary_signature"><a href="#retrieve/2">retrieve(params // [], headers // [])</a></td>
   
-    <td class="summary_synopsis"><p>Blah Blah Blah</p>
+    <td class="summary_synopsis"><p>Retrieves the details of a charge previously created given a charge&#39;s
+unique ID.</p>
 </td>
   
 </tr>
@@ -83,9 +94,13 @@
     <strong>create(params // [], headers // [])</strong>
   </p>
   
-  <div class="docstring"></div>
+  <div class="docstring"><p>Creates a new charge.</p>
+
+<pre><code>{:ok, result} = Stripe.Charge.create(amount: 1200, currency: &quot;usd&quot;)
+</code></pre>
+</div>
   
-    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/stripe.ex#L24" target="_blank" class="view_source">Source</a>
+    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/stripe.ex#L39" target="_blank" class="view_source">Source</a>
   
 </div>
 <div class="detail">
@@ -96,7 +111,7 @@
   <div class="docstring"><p>See <a href="#create/2"><code>create/2</code></a>. Throws exception if call fails.</p>
 </div>
   
-    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/stripe.ex#L24" target="_blank" class="view_source">Source</a>
+    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/stripe.ex#L39" target="_blank" class="view_source">Source</a>
   
 </div>
 <div class="detail">
@@ -114,10 +129,14 @@
     <strong>retrieve(params // [], headers // [])</strong>
   </p>
   
-  <div class="docstring"><p>Blah Blah Blah</p>
+  <div class="docstring"><p>Retrieves the details of a charge previously created given a charge&#39;s
+unique ID.</p>
+
+<pre><code>{:ok, charge} = Stripe.Charge.retrieve(id: &quot;ch_103PJx2eZvKYlo2CRxOx5kYE&quot;)
+</code></pre>
 </div>
   
-    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/stripe.ex#L23" target="_blank" class="view_source">Source</a>
+    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/stripe.ex#L32" target="_blank" class="view_source">Source</a>
   
 </div>
 <div class="detail">
@@ -128,7 +147,7 @@
   <div class="docstring"><p>See <a href="#retrieve/2"><code>retrieve/2</code></a>. Throws exception if call fails.</p>
 </div>
   
-    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/stripe.ex#L23" target="_blank" class="view_source">Source</a>
+    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/stripe.ex#L32" target="_blank" class="view_source">Source</a>
   
 </div>
 
