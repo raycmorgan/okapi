@@ -62,9 +62,13 @@ defmodule Okapi.Resource do
         require EEx
         
         # if Module.get_attribute(__MODULE__, :doc) do
-        #   @edoc @doc
-        # else
-        #   @edoc nil
+        #   @doc """
+        #   #{@doc}
+
+        #   Example usage
+
+        #       {:ok, result} = #{Enum.join(Module.split(__MODULE__), ".")}.#{unquote(endpoint_name)}()
+        #   """
         # end
 
         # @doc nil
