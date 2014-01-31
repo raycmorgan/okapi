@@ -42,8 +42,6 @@ defmodule OkapiTest do
 
   test "start" do
     assert MyAPI.start == :ok
-
-    IO.puts(inspect(MyAPI.Charge.__info__(:docs)))
   end
 
   test "setting and getting config" do

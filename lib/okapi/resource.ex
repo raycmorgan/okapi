@@ -59,21 +59,6 @@ defmodule Okapi.Resource do
       method = unquote(method)
 
       quote do
-        require EEx
-        
-        # if Module.get_attribute(__MODULE__, :doc) do
-        #   @doc """
-        #   #{@doc}
-
-        #   Example usage
-
-        #       {:ok, result} = #{Enum.join(Module.split(__MODULE__), ".")}.#{unquote(endpoint_name)}()
-        #   """
-        # end
-
-        # @doc nil
-
-        # @doc @edoc #unquote(doc)
         def unquote(endpoint_name)(params // [], headers // []) do
           handle_call(@api_module, unquote(method), unquote(template_fn)(params), unquote(options), params, headers)
         end
@@ -88,6 +73,7 @@ defmodule Okapi.Resource do
           { unquote(endpoint_name),
             Dict.merge([method: unquote(method)], unquote(options)) })
 
+        require EEx
         EEx.function_from_string :defp, unquote(template_fn), unquote(rurl), unquote(tmpl_input)
       end
     end
