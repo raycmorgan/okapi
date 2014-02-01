@@ -4,6 +4,8 @@ defmodule Okapi.Resource do
   the actual HTTP(s) API calls.
   """
 
+  alias Okapi.Request
+
   defmacro __using__(opts) do
     quote location: :keep do
       import Okapi.Resource
@@ -81,7 +83,7 @@ defmodule Okapi.Resource do
 
   @doc false
   def handle_call(module, method, path, options, params, headers) do
-    request = {method, path, params, headers}
+    request = Okapi.Request.new(method: method, path: path, params: params, headers: headers)
     request = before_request(request, module, options)
 
     if valid_input?(module, options[:input], params) do
@@ -95,14 +97,14 @@ defmodule Okapi.Resource do
     module.auth(request)
   end
 
-  defp perform_request({:post, _, _, _}, _), do: true
-  defp perform_request({:get, path, _params, headers}, module) do
-    headers = dict_to_headers(headers)
+  defp perform_request(request=Request[method: :post], _), do: true
+  defp perform_request(request=Request[method: :get], module) do
+    headers = dict_to_headers(request.headers)
 
-    uri = to_char_list(module.base_url <> path)
+    uri = to_char_list(module.base_url <> request.path)
     req = {uri, headers}
 
-    :httpc.request(:get, req, [], [body_format: :binary])
+    :httpc.request(request.method, req, [], [body_format: :binary])
   end
 
   defp process_request_result({:ok, {_, _, body}}), do: JSEX.decode(body)

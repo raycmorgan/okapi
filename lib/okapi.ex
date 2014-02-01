@@ -27,6 +27,12 @@ defmodule Okapi do
       Stripe.Charge.create amount: 1200
   """
 
+  defrecord Request,
+    method: nil,
+    path: nil,
+    params: nil,
+    headers: nil
+
   defmacro __using__(_) do
     quote location: :keep do
       import Okapi
@@ -34,15 +40,12 @@ defmodule Okapi do
 
       @before_compile Okapi
 
-      Module.register_attribute(__MODULE__, :resources, accumulate: true)
       Module.put_attribute(__MODULE__, :inputs, [])
 
       def start, do: Okapi.start
-      def description, do: Okapi.description(__MODULE__)
       def input_type(key), do: Okapi.get_input(__MODULE__, key)
       def valid?(key, record), do: Okapi.valid?(__MODULE__, key, record)
-
-      def auth(request_tuple), do: request_tuple
+      def auth(request), do: request
 
       defoverridable [auth: 1]
     end
@@ -50,11 +53,9 @@ defmodule Okapi do
 
   defmacro __before_compile__(env) do
     mod = env.module
-    res = Enum.reverse(Module.get_attribute(mod, :resources))
     inputs = Enum.reverse(Module.get_attribute(mod, :inputs))
 
     quote do
-      def resources, do: unquote(res)
       def inputs, do: unquote(inputs)
     end
   end
@@ -129,7 +130,7 @@ defmodule Okapi do
     {:__aliases__, _, [module_name]} = name
 
     quote do
-      Module.put_attribute(__MODULE__, :resources, :"#{unquote(parent)}.#{unquote(module_name)}")
+      # Module.put_attribute(__MODULE__, :resources, :"#{unquote(parent)}.#{unquote(module_name)}")
 
       defmodule unquote(name) do
         use Okapi.Resource, api_module: unquote(parent)
@@ -183,11 +184,6 @@ defmodule Okapi do
   # ---------------------------------------------------------------------------
   # Internal Functions
   # ---------------------------------------------------------------------------
-
-  @doc false
-  def description(module) do
-    Enum.map(module.resources, &("#{&1}: #{&1.description}"))
-  end
 
   @doc false
   def get_config(module, key, default // nil) do

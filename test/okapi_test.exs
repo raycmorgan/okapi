@@ -31,9 +31,9 @@ defmodule MyAPI do
     """
   end
 
-  def auth({method, uri, params, headers}) do
-    headers = Okapi.add_header(headers, "Authorization", MyAPI.api_key)
-    {method, uri, params, headers}
+  def auth(request) do
+    Okapi.add_header(request.headers, "Authorization", MyAPI.api_key)
+      |> request.headers
   end
 end
 
@@ -52,12 +52,6 @@ defmodule OkapiTest do
 
   test "config default" do
     assert MyAPI.api_key == "sk_test_BQokikJOvBiI2HlWgH4olfQ2"
-  end
-
-  test "description" do
-    assert MyAPI.description ==
-      ["Elixir.MyAPI.Charge: [create: [method: :post, input: :charge], retrieve: [method: :get]]",
-       "Elixir.MyAPI.Customer: []"]
   end
 end
 
