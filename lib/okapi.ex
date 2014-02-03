@@ -27,11 +27,7 @@ defmodule Okapi do
       Stripe.Charge.create amount: 1200
   """
 
-  defrecord Request,
-    method: nil,
-    path: nil,
-    params: nil,
-    headers: nil
+  alias Okapi.HTTP.Request
 
   defmacro __using__(_) do
     quote location: :keep do

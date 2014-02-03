@@ -4,7 +4,7 @@ defmodule Okapi.Resource do
   the actual HTTP(s) API calls.
   """
 
-  alias Okapi.Request
+  alias Okapi.HTTP.Request
 
   defmacro __using__(opts) do
     quote location: :keep do
@@ -67,8 +67,13 @@ defmodule Okapi.Resource do
 
         @doc "See `#{unquote(endpoint_name)}/2`. Throws exception if call fails."
         def unquote(:"#{endpoint_name}!")(params // [], headers // []) do
-          {:ok, result} = handle_call(@api_module, unquote(method), unquote(template_fn)(params), unquote(options), params, headers)
-          result
+          uri = unquote(template_fn)(params)
+
+          case handle_call(@api_module, unquote(method), uri, unquote(options), params, headers) do
+            {:ok, {status_code, _, result}} when status_code >= 200 and status_code < 300 -> result
+            {:ok, {status_code, headers, result}} -> {:error, {status_code, headers, result}}
+            error -> error
+          end
         end
 
         Module.put_attribute(__MODULE__, :endpoints, 
@@ -83,8 +88,8 @@ defmodule Okapi.Resource do
 
   @doc false
   def handle_call(module, method, path, options, params, headers) do
-    request = Okapi.Request.new(method: method, path: path, params: params, headers: headers)
-    request = before_request(request, module, options)
+    request = Request.new(method: method, path: path, params: params, headers: headers, api_module: module)
+    request = before_request(request)
 
     if valid_input?(module, options[:input], params) do
       perform_request(request, module) |> process_request_result
@@ -93,11 +98,19 @@ defmodule Okapi.Resource do
     end
   end
 
-  defp before_request(request, module, _options) do
-    module.auth(request)
+  defp before_request(request) do
+    request.api_module.auth(request)
   end
 
-  defp perform_request(request=Request[method: :post], _), do: true
+  defp perform_request(request=Request[method: :post], module) do
+    headers = dict_to_headers(request.headers)
+
+    uri = to_char_list(module.base_url <> request.path)
+    req = {uri, headers, 'application/x-www-form-urlencoded', URI.encode_query(request.params)}
+
+    :httpc.request(request.method, req, [], [body_format: :binary])
+  end
+
   defp perform_request(request=Request[method: :get], module) do
     headers = dict_to_headers(request.headers)
 
@@ -107,7 +120,7 @@ defmodule Okapi.Resource do
     :httpc.request(request.method, req, [], [body_format: :binary])
   end
 
-  defp process_request_result({:ok, {_, _, body}}), do: JSEX.decode(body)
+  defp process_request_result({:ok, {{_, status_code, _}, headers, body}}), do: {:ok, {status_code, headers, JSEX.decode!(body)}}
   defp process_request_result(error), do: error
 
   defp valid_input?(_, nil, _), do: true
