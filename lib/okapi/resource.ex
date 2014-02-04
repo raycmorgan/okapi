@@ -4,6 +4,10 @@ defmodule Okapi.Resource do
   the actual HTTP(s) API calls.
   """
 
+  defexception NotFound, [:code, :type, :message]
+  defexception BadRequest, [:code, :type, :message]
+  defexception RequestError, [:code, :type, :message]
+
   alias Okapi.HTTP.Request
 
   defmacro __using__(opts) do
@@ -62,7 +66,11 @@ defmodule Okapi.Resource do
 
       quote do
         def unquote(endpoint_name)(params // [], headers // []) do
-          handle_call(@api_module, unquote(method), unquote(template_fn)(params), unquote(options), params, headers)
+          uri = unquote(template_fn)(params)
+          case handle_call(@api_module, unquote(method), uri, unquote(options), params, headers) do
+            {:ok, {status_code, _, _}} = result when status_code >= 200 and status_code < 300 -> result
+            {:ok, result} -> {:error, result}
+          end
         end
 
         @doc "See `#{unquote(endpoint_name)}/2`. Throws exception if call fails."
@@ -71,8 +79,16 @@ defmodule Okapi.Resource do
 
           case handle_call(@api_module, unquote(method), uri, unquote(options), params, headers) do
             {:ok, {status_code, _, result}} when status_code >= 200 and status_code < 300 -> result
-            {:ok, {status_code, headers, result}} -> {:error, {status_code, headers, result}}
-            error -> error
+            {:ok, {status_code, headers, result}} ->
+              type = result["error"]["type"]
+              message = result["error"]["message"]
+
+              raise (case status_code do
+                400 -> BadRequest[code: status_code, message: message, type: type]
+                404 -> NotFound[code: status_code, message: message, type: type]
+                _   -> RequestError[code: status_code, message: message, type: type]
+              end)
+            error -> raise error
           end
         end
 
@@ -120,7 +136,9 @@ defmodule Okapi.Resource do
     :httpc.request(request.method, req, [], [body_format: :binary])
   end
 
-  defp process_request_result({:ok, {{_, status_code, _}, headers, body}}), do: {:ok, {status_code, headers, JSEX.decode!(body)}}
+  defp process_request_result({:ok, {{_, status_code, _}, headers, body}}) do
+    {:ok, {status_code, headers, JSEX.decode!(body)}}
+  end
   defp process_request_result(error), do: error
 
   defp valid_input?(_, nil, _), do: true

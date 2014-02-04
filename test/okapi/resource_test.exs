@@ -34,6 +34,13 @@ defmodule OkapiTest.Resource do
     assert charge["id"] != nil
   end
 
+  test "invalid POST" do
+    {:error, {status_code, _headers, result}} = Stripe.Charge.create(amount: 5)
+
+    assert status_code == 400
+    assert result["error"]["type"] == "invalid_request_error"
+  end
+
   test "valid POST!" do
     charge = Stripe.Charge.create!(
       amount: 500,
@@ -42,5 +49,13 @@ defmodule OkapiTest.Resource do
     )
 
     assert charge["id"] != nil
+  end
+
+  test "invalid POST!" do
+    try do
+      Stripe.Charge.create!(amount: 5)
+    rescue
+      err in [Okapi.Resource.BadRequest] -> assert err.code == 400
+    end
   end
 end
