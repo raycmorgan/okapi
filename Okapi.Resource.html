@@ -45,7 +45,15 @@ the actual HTTP(s) API calls.</p>
         <h2 id="macros_summary">Macros summary</h2>
         <table class="summary">
           <tr>
-  <td class="summary_signature"><a href="#get/3">get(endpoint_name, path, options // [])</a></td>
+  <td class="summary_signature"><a href="#delete/3">delete(endpoint_name, path, options \\ [])</a></td>
+  
+    <td class="summary_synopsis"><p>Creates an endpoint function that uses the
+DELETE HTTP verb.</p>
+</td>
+  
+</tr>
+<tr>
+  <td class="summary_signature"><a href="#get/3">get(endpoint_name, path, options \\ [])</a></td>
   
     <td class="summary_synopsis"><p>Creates an endpoint function that uses the
 GET HTTP verb.</p>
@@ -53,10 +61,34 @@ GET HTTP verb.</p>
   
 </tr>
 <tr>
-  <td class="summary_signature"><a href="#post/3">post(endpoint_name, path, options // [])</a></td>
+  <td class="summary_signature"><a href="#head/3">head(endpoint_name, path, options \\ [])</a></td>
+  
+    <td class="summary_synopsis"><p>Creates an endpoint function that uses the
+HEAD HTTP verb.</p>
+</td>
+  
+</tr>
+<tr>
+  <td class="summary_signature"><a href="#patch/3">patch(endpoint_name, path, options \\ [])</a></td>
+  
+    <td class="summary_synopsis"><p>Creates an endpoint function that uses the
+PATCH HTTP verb.</p>
+</td>
+  
+</tr>
+<tr>
+  <td class="summary_signature"><a href="#post/3">post(endpoint_name, path, options \\ [])</a></td>
   
     <td class="summary_synopsis"><p>Creates an endpoint function that uses the
 POST HTTP verb.</p>
+</td>
+  
+</tr>
+<tr>
+  <td class="summary_signature"><a href="#put/3">put(endpoint_name, path, options \\ [])</a></td>
+  
+    <td class="summary_synopsis"><p>Creates an endpoint function that uses the
+PUT HTTP verb.</p>
 </td>
   
 </tr>
@@ -74,8 +106,43 @@ POST HTTP verb.</p>
         <div id="macros_details" class="details_list">
           <h2>Macros</h2>
           <div class="detail">
+  <p class="signature" id="delete/3">
+    <strong>delete(endpoint_name, path, options \\ [])</strong>
+  </p>
+  
+  <div class="docstring"><p>Creates an endpoint function that uses the
+DELETE HTTP verb.</p>
+
+<p>The function that will be generated will be named <code>endpoint_name</code>. For
+example, given the following module.</p>
+
+<pre><code>defmodule Stripe do
+  use Okapi
+
+  resource Charge do
+    delete :delete, &quot;/charges/{id}&quot;
+  end
+end
+</code></pre>
+
+<p>The function <code>delete</code> will be added to the Stripe.Charge module.</p>
+
+<pre><code>{:ok, result} = Stripe.Charge.delete(id: &quot;ch_103KlI2eZvKYlo2Cb03HHP8s&quot;)
+</code></pre>
+
+<p>There will also be a ! version created that simply returns the result, but
+throws an error on failed requests.</p>
+
+<pre><code>result = Stripe.Charge.delete!(id: &quot;ch_103KlI2eZvKYlo2Cb03HHP8s&quot;)
+</code></pre>
+</div>
+  
+    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/okapi/resource.ex#L64" target="_blank" class="view_source">Source</a>
+  
+</div>
+<div class="detail">
   <p class="signature" id="get/3">
-    <strong>get(endpoint_name, path, options // [])</strong>
+    <strong>get(endpoint_name, path, options \\ [])</strong>
   </p>
   
   <div class="docstring"><p>Creates an endpoint function that uses the
@@ -105,12 +172,82 @@ throws an error on failed requests.</p>
 </code></pre>
 </div>
   
-    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/okapi/resource.ex#L60" target="_blank" class="view_source">Source</a>
+    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/okapi/resource.ex#L64" target="_blank" class="view_source">Source</a>
+  
+</div>
+<div class="detail">
+  <p class="signature" id="head/3">
+    <strong>head(endpoint_name, path, options \\ [])</strong>
+  </p>
+  
+  <div class="docstring"><p>Creates an endpoint function that uses the
+HEAD HTTP verb.</p>
+
+<p>The function that will be generated will be named <code>endpoint_name</code>. For
+example, given the following module.</p>
+
+<pre><code>defmodule Stripe do
+  use Okapi
+
+  resource Charge do
+    head :info, &quot;/charges/{id}&quot;
+  end
+end
+</code></pre>
+
+<p>The function <code>info</code> will be added to the Stripe.Charge module.</p>
+
+<pre><code>{:ok, result} = Stripe.Charge.info(id: &quot;ch_103KlI2eZvKYlo2Cb03HHP8s&quot;)
+</code></pre>
+
+<p>There will also be a ! version created that simply returns the result, but
+throws an error on failed requests.</p>
+
+<pre><code>result = Stripe.Charge.info!(id: &quot;ch_103KlI2eZvKYlo2Cb03HHP8s&quot;)
+</code></pre>
+</div>
+  
+    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/okapi/resource.ex#L64" target="_blank" class="view_source">Source</a>
+  
+</div>
+<div class="detail">
+  <p class="signature" id="patch/3">
+    <strong>patch(endpoint_name, path, options \\ [])</strong>
+  </p>
+  
+  <div class="docstring"><p>Creates an endpoint function that uses the
+PATCH HTTP verb.</p>
+
+<p>The function that will be generated will be named <code>endpoint_name</code>. For
+example, given the following module.</p>
+
+<pre><code>defmodule Stripe do
+  use Okapi
+
+  resource Charge do
+    patch :update, &quot;/charges/{id}&quot;
+  end
+end
+</code></pre>
+
+<p>The function <code>update</code> will be added to the Stripe.Charge module.</p>
+
+<pre><code>{:ok, result} = Stripe.Charge.update(id: &quot;ch_103KlI2eZvKYlo2Cb03HHP8s&quot;)
+</code></pre>
+
+<p>There will also be a ! version created that simply returns the result, but
+throws an error on failed requests.</p>
+
+<pre><code>result = Stripe.Charge.update!(id: &quot;ch_103KlI2eZvKYlo2Cb03HHP8s&quot;)
+</code></pre>
+</div>
+  
+    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/okapi/resource.ex#L64" target="_blank" class="view_source">Source</a>
   
 </div>
 <div class="detail">
   <p class="signature" id="post/3">
-    <strong>post(endpoint_name, path, options // [])</strong>
+    <strong>post(endpoint_name, path, options \\ [])</strong>
   </p>
   
   <div class="docstring"><p>Creates an endpoint function that uses the
@@ -140,7 +277,42 @@ throws an error on failed requests.</p>
 </code></pre>
 </div>
   
-    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/okapi/resource.ex#L60" target="_blank" class="view_source">Source</a>
+    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/okapi/resource.ex#L64" target="_blank" class="view_source">Source</a>
+  
+</div>
+<div class="detail">
+  <p class="signature" id="put/3">
+    <strong>put(endpoint_name, path, options \\ [])</strong>
+  </p>
+  
+  <div class="docstring"><p>Creates an endpoint function that uses the
+PUT HTTP verb.</p>
+
+<p>The function that will be generated will be named <code>endpoint_name</code>. For
+example, given the following module.</p>
+
+<pre><code>defmodule Stripe do
+  use Okapi
+
+  resource Charge do
+    put :update, &quot;/charges/{id}&quot;
+  end
+end
+</code></pre>
+
+<p>The function <code>update</code> will be added to the Stripe.Charge module.</p>
+
+<pre><code>{:ok, result} = Stripe.Charge.update(id: &quot;ch_103KlI2eZvKYlo2Cb03HHP8s&quot;)
+</code></pre>
+
+<p>There will also be a ! version created that simply returns the result, but
+throws an error on failed requests.</p>
+
+<pre><code>result = Stripe.Charge.update!(id: &quot;ch_103KlI2eZvKYlo2Cb03HHP8s&quot;)
+</code></pre>
+</div>
+  
+    <a href="https://github.com/raycmorgan/okapi/blob/master/lib/okapi/resource.ex#L64" target="_blank" class="view_source">Source</a>
   
 </div>
 
