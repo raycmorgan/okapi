@@ -61,7 +61,7 @@ defmodule Okapi do
 
   The configuration is available when making API calls.
   """
-  defmacro config(key, default // nil) do
+  defmacro config(key, default \\ nil) do
     quote do
       @doc """
       Get the configuration value for `#{unquote(key)}`.
@@ -182,7 +182,7 @@ defmodule Okapi do
   # ---------------------------------------------------------------------------
 
   @doc false
-  def get_config(module, key, default // nil) do
+  def get_config(module, key, default \\ nil) do
     case :application.get_env(module, key) do
       :undefined -> default
       {:ok, value} -> value

@@ -45,10 +45,8 @@ defmodule OkapiTest.Resource do
   end
 
   test "invalid POST!" do
-    try do
+    assert_raise Okapi.Resource.BadRequest, fn ->
       Stripe.Charge.create!(amount: 5)
-    rescue
-      err in [Okapi.Resource.BadRequest] -> assert err.code == 400
     end
   end
 end
