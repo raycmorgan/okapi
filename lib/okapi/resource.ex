@@ -16,6 +16,7 @@ defmodule Okapi.Resource do
 
       @before_compile Okapi.Resource
       @api_module unquote(opts)[:api_module]
+      @prefix ""
 
       Module.register_attribute(__MODULE__, :endpoints, accumulate: true)
     end
@@ -61,7 +62,7 @@ defmodule Okapi.Resource do
 
         #{doc_out_name} = Stripe.Charge.#{doc_fn_name}!(id: "ch_103KlI2eZvKYlo2Cb03HHP8s")
     """
-    defmacro unquote(method)(endpoint_name, path, options \\ []) do
+    defmacro unquote(method)(endpoint_name, path \\ "", options \\ []) do
       tmpl_input = if String.contains?(path, "{"), do: [:assigns], else: [:"_assigns"]
 
       rurl = path |> String.replace("{", "<%=@") |> String.replace("}", "%>")
@@ -70,7 +71,7 @@ defmodule Okapi.Resource do
 
       quote do
         def unquote(endpoint_name)(params \\ [], headers \\ []) do
-          uri = unquote(template_fn)(params)
+          uri = @prefix <> unquote(template_fn)(params)
           case handle_call(@api_module, unquote(method), uri, unquote(options), params, headers) do
             {:ok, {status_code, _, _}} = result when status_code >= 200 and status_code < 300 -> result
             {:ok, result} -> {:error, result}
@@ -79,7 +80,7 @@ defmodule Okapi.Resource do
 
         @doc "See `#{unquote(endpoint_name)}/2`. Throws exception if call fails."
         def unquote(:"#{endpoint_name}!")(params \\ [], headers \\ []) do
-          uri = unquote(template_fn)(params)
+          uri = @prefix <> unquote(template_fn)(params)
 
           case handle_call(@api_module, unquote(method), uri, unquote(options), params, headers) do
             {:ok, {status_code, _, result}} when status_code >= 200 and status_code < 300 -> result
