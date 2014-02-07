@@ -13,7 +13,7 @@ defmodule Okapi.Input do
     * `:type` - `:integer` | `:string` | ...
     * `:doc` - Additional documentation to describe the type
     """
-    defmacro unquote(modifier)(name, options // [type: :any, doc: ""]) do
+    defmacro unquote(modifier)(name, options \\ [type: :any, doc: ""]) do
       modifier = unquote(modifier)
 
       quote do
