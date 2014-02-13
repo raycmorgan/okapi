@@ -127,7 +127,7 @@ defmodule Okapi.Resource do
     headers = dict_to_headers(request.headers)
 
     uri = to_char_list(module.base_url <> request.path)
-    req = {uri, headers, 'application/x-www-form-urlencoded', URI.encode_query(request.params)}
+    req = {uri, headers, 'application/x-www-form-urlencoded', Okapi.URI.encode_query(request.params)}
 
     :httpc.request(request.method, req, [], [body_format: :binary])
   end
